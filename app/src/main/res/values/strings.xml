@@ -6,6 +6,7 @@
     <string name="cross">Cross</string>
     <string name="circle">Circle</string>
     <string name="turn">\'s turn</string>
+    <string name="none" />
 
     <string name="start">Let\'s play</string>
     <string name="back">Back to Menu</string>

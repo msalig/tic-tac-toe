@@ -8,14 +8,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +37,7 @@ class GameActivity : ComponentActivity() {
 
 @Composable
 fun GameScreen(onNavigateToMenu: () -> Unit) {
-    var turn by remember { mutableStateOf(1) }
+    val viewModel = GameBoardViewModel()
 
     // A surface container using the 'background' color from the theme
     Surface(
@@ -55,7 +56,7 @@ fun GameScreen(onNavigateToMenu: () -> Unit) {
                 Card(
                     elevation = 3.dp,
                     shape = RoundedCornerShape(16.dp),
-                    backgroundColor = if (turn == 1) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
+                    backgroundColor = if (viewModel.turn == 1) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
                     modifier = Modifier
                         .height(150.dp)
                         .width(120.dp)
@@ -70,13 +71,13 @@ fun GameScreen(onNavigateToMenu: () -> Unit) {
                             painter = painterResource(id = R.drawable.cross),
                             contentDescription = stringResource(id = R.string.cross)
                         )
-                        if (turn == 1) {
+                        if (viewModel.turn == 1) {
                             Text(
                                 text = stringResource(id = R.string.player_one) + stringResource(id = R.string.turn),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 20.dp)
                             )
-                        } else if (turn == 2) {
+                        } else {
                             Text(
                                 text = stringResource(id = R.string.player_one),
                                 textAlign = TextAlign.Center,
@@ -89,7 +90,7 @@ fun GameScreen(onNavigateToMenu: () -> Unit) {
                 Card(
                     elevation = 3.dp,
                     shape = RoundedCornerShape(16.dp),
-                    backgroundColor = if (turn == 2) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
+                    backgroundColor = if (viewModel.turn == 2) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
                     modifier = Modifier
                         .height(150.dp)
                         .width(120.dp)
@@ -104,13 +105,13 @@ fun GameScreen(onNavigateToMenu: () -> Unit) {
                             painter = painterResource(id = R.drawable.circle),
                             contentDescription = stringResource(id = R.string.circle)
                         )
-                        if (turn == 1) {
+                        if (viewModel.turn == 1) {
                             Text(
                                 text = stringResource(id = R.string.player_two),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 20.dp)
                             )
-                        } else if (turn == 2) {
+                        } else {
                             Text(
                                 text = stringResource(id = R.string.player_two) + stringResource(id = R.string.turn),
                                 textAlign = TextAlign.Center,
@@ -122,11 +123,27 @@ fun GameScreen(onNavigateToMenu: () -> Unit) {
                 }
             }
 
-            GameBoard(turn) {
+            /*GameBoard(turn) {
                 turn = if (turn == 1)
                     2
                 else
                     1
+            }*/
+
+            GameBoard(viewModel.buttonUiStates) { index ->
+                if (viewModel.turn == 1) {
+                    viewModel.updateGameBoardButton(
+                        index,
+                        ButtonUiState(R.drawable.cross, CrossRed, R.string.cross, false)
+                    )
+                    viewModel.setTurn(2)
+                } else {
+                    viewModel.updateGameBoardButton(
+                        index,
+                        ButtonUiState(R.drawable.circle, CircleBlue, R.string.circle, false)
+                    )
+                    viewModel.setTurn(1)
+                }
             }
 
             if (Build.VERSION.SDK_INT >= 31) {
@@ -141,6 +158,73 @@ fun GameScreen(onNavigateToMenu: () -> Unit) {
     }
 }
 
+@Composable
+fun GameBoard(buttons: List<ButtonUiState>, updateButtonUiState: (Int) -> Unit) {
+
+    Card(Modifier.size(300.dp)) {
+        LazyHorizontalGrid(
+            rows = GridCells.Fixed(3),
+            userScrollEnabled = false,
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center
+        ) {
+            itemsIndexed(buttons) { index, item ->
+                GameBoardButton(
+                    item.drawable,
+                    item.tint,
+                    item.contentDescription,
+                    item.enabled
+                ) {
+                    updateButtonUiState(index)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GameBoardButton(
+    drawableRes: Int,
+    tint: Color,
+    contentDescription: Int,
+    enabled: Boolean,
+    onButtonUpdate: () -> Unit
+) {
+
+    IconButton(
+        interactionSource = MutableInteractionSource(),
+        onClick = {
+            if (enabled)
+                onButtonUpdate()
+        },
+        modifier = Modifier
+            .size(100.dp)
+            .border(
+                2.dp, MaterialTheme.colors.secondary
+            )
+    ) {
+        Icon(
+            painter = painterResource(id = drawableRes),
+            tint = tint,
+            contentDescription = stringResource(id = contentDescription)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun GameBoardButtonPreview() {
+    GameBoardButton(
+        drawableRes = R.drawable.circle,
+        tint = CircleBlue,
+        contentDescription = R.string.none,
+        enabled = true
+    ) {
+
+    }
+}
+
+/*
 @Composable
 fun GameBoard(turn: Int, onClick: () -> Unit) {
 
@@ -165,55 +249,6 @@ fun GameBoard(turn: Int, onClick: () -> Unit) {
     }
 }
 
-/*
-@Composable
-fun GameBoard2(){
-    val viewModel = GameBoardViewModel()
-
-    LazyHorizontalGrid(rows = GridCells.Fixed(3)){
-        itemsIndexed(viewModel.buttons2){ index, item ->
-            GameBoardButton2(item) {}
-        }
-    }
-}
-
-@Composable
-fun GameBoardButton2(someData: Any, onButtonUpdate: () -> Unit) {
-    var iconLocal by remember {
-        mutableStateOf(R.drawable.ic_nothing)
-    }
-    var enabled by rememberSaveable {
-        mutableStateOf(true)
-    }
-    var tint by remember {
-        mutableStateOf(CrossRed)
-    }
-    var contentDescription by remember {
-        mutableStateOf("")
-    }
-    /*val openDialog = remember { mutableStateOf(false) }
-    if (openDialog.value)
-        RematchDialog(openDialog)*/
-
-    IconButton(
-        interactionSource = MutableInteractionSource(),
-        onClick = {
-            onButtonUpdate(item.copy(dr))
-        },
-        modifier = Modifier
-            .size(100.dp)
-            .border(
-                2.dp, MaterialTheme.colors.secondary
-            )
-    ) {
-        Icon(
-            painter = painterResource(id = iconLocal),
-            tint = tint,
-            contentDescription = contentDescription
-        )
-    }
-}
-*/
 @Composable
 fun GameBoardButton(turn: Int, onClick: () -> Unit) {
     var iconLocal by remember {
@@ -254,7 +289,7 @@ fun GameBoardButton(turn: Int, onClick: () -> Unit) {
         )
     }
 }
-
+*/
 @Preview(showBackground = true)
 @Composable
 fun GameScreenPreviewDark() {
