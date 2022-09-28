@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">TicTacToe</string>
 
+    <string name="player_one">Player 1</string>
+    <string name="player_two">Player 2</string>
+    <string name="cross">Cross</string>
+    <string name="circle">Circle</string>
+    <string name="turn">\'s turn</string>
+
     <string name="start">Let\'s play</string>
+    <string name="back">Back to Menu</string>
 </resources>
