@@ -6,8 +6,16 @@
     <string name="cross">Cross</string>
     <string name="circle">Circle</string>
     <string name="turn">\'s turn</string>
-    <string name="none" />
+    <string name="nothing" />
+    <string name="highscore">Highscore</string>
 
     <string name="start">Let\'s play</string>
     <string name="back">Back to Menu</string>
+
+    <string name="yes_rematch">Yes, rematch!</string>
+    <string name="rematch">Do you want a rematch?</string>
+    <string name="won">&#160;Won</string>
+    <string name="no">No</string>
+
+    <string name="draw">Draw</string>
 </resources>

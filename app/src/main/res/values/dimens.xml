@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_default">40.dp</dimen>
+    <dimen name="padding_small">15.dp</dimen>
+    <dimen name="padding_text">20.dp</dimen>
+    <dimen name="padding_text_small">10.dp</dimen>
+    <dimen name="border_size">3.dp</dimen>
+    <dimen name="elevation_default">3.dp</dimen>
+
+    <dimen name="player_card_height">150.dp</dimen>
+    <dimen name="player_card_width">120.dp</dimen>
+    <dimen name="highscore_card_height">50.dp</dimen>
+    <dimen name="rounded_corners">16.dp</dimen>
+</resources>

@@ -5,44 +5,57 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import net.salig.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
-fun RematchDialog(openDialog: MutableState<Boolean>) {
+fun RematchDialog(
+    winner: Int,
+    hideDialog: () -> Unit,
+    setTurn: (Int) -> Unit,
+    resetButtonUiStates: () -> Unit,
+    navigateBack: () -> Unit
+) {
     AlertDialog(
         onDismissRequest = {
             // Dismiss the dialog when the user clicks outside the dialog or on the back
             // button. If you want to disable that functionality, simply use an empty
             // onCloseRequest.
-            openDialog.value = false
         },
         title = {
-            Text(text = "Player 1 Won")
+            Text(
+                text = if (winner != R.string.draw) stringResource(id = winner) + stringResource(id = R.string.won)
+                else stringResource(id = R.string.draw)
+            )
         },
         text = {
             Text(
-                "Do you want a rematch?"
+                stringResource(id = R.string.rematch)
             )
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    openDialog.value = false
+                    when (winner) {
+                        R.string.player_one -> setTurn(2)
+                        R.string.player_two -> setTurn(1)
+                    }
+                    resetButtonUiStates()
+                    hideDialog()
                 }
             ) {
-                Text("Yes, Rematch!")
+                Text(stringResource(id = R.string.yes_rematch))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = {
-                    openDialog.value = false
+                    //openDialog.value = false
+                    navigateBack()
                 }
             ) {
-                Text("No")
+                Text(stringResource(id = R.string.no))
             }
         }
     )
@@ -53,6 +66,6 @@ fun RematchDialog(openDialog: MutableState<Boolean>) {
 @Composable
 fun RematchDialogPreview() {
     TicTacToeTheme {
-        RematchDialog(mutableStateOf(true))
+        RematchDialog(R.string.nothing, { }, {}, {}, {})
     }
 }
