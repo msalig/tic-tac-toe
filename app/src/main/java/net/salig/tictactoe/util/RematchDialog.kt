@@ -1,4 +1,4 @@
-package net.salig.tictactoe
+package net.salig.tictactoe.util
 
 import android.annotation.SuppressLint
 import androidx.compose.material.AlertDialog
@@ -7,6 +7,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import net.salig.tictactoe.R
 import net.salig.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
@@ -31,7 +32,8 @@ fun RematchDialog(
         },
         text = {
             Text(
-                stringResource(id = R.string.rematch)
+                text = if (winner != R.string.draw) stringResource(id = R.string.rematch)
+                else stringResource(id = R.string.next_match)
             )
         },
         confirmButton = {
@@ -51,7 +53,7 @@ fun RematchDialog(
         dismissButton = {
             TextButton(
                 onClick = {
-                    //openDialog.value = false
+                    hideDialog()
                     navigateBack()
                 }
             ) {

@@ -1,17 +1,16 @@
-package net.salig.tictactoe
+package net.salig.tictactoe.game
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import net.salig.tictactoe.R
 
-class ButtonUiState(
+data class ButtonUiState(
     @DrawableRes var drawable: Int = R.drawable.ic_nothing,
     var tint: Color = Color.Black,
     @StringRes var contentDescription: Int = R.string.nothing,
@@ -19,21 +18,22 @@ class ButtonUiState(
 )
 
 class GameScreenViewModel : ViewModel() {
-    var turn by mutableStateOf(1)
+    var turn = mutableStateOf(1)
 
-    //max up to 6
     val gridSize = 3
-
-    var gameBoardSizeDp: Int = 0
-    var gameBoardSizePx: Float = 0f
 
     var highScorePlayerOne = 0
     var highScorePlayerTwo = 0
 
     private var list = Array(gridSize * gridSize) { 0 }
-    var lineCoordinates: List<Float> = listOf(0f, 0f, 0f, 0f)
 
+    //For Animation of Won line
+    var gameBoardSizeDp: Int = 0
+    var gameBoardSizePx: Float = 0f
+    var lineCoordinates: List<Float> = listOf(0f, 0f, 0f, 0f)
     private var checkIfWonList = Array(2 * gridSize + 2) { mutableListOf<Int>() }
+    var wonDirection = "0"
+
 
     var showDialog = mutableStateOf(false)
     var winner = mutableStateOf(R.string.nothing)
@@ -58,6 +58,7 @@ class GameScreenViewModel : ViewModel() {
             else if (i == 2 * gridSize + 1)
                 for (item in gridSize - 1..gridSize * gridSize - gridSize step gridSize - 1)
                     checkIfWonList[i].add(item)
+
     }
 
     fun resetButtonUiStates() {
@@ -68,44 +69,46 @@ class GameScreenViewModel : ViewModel() {
 
         list = Array(gridSize * gridSize) { 0 }
         lineCoordinates = listOf(0f, 0f, 0f, 0f)
+
     }
 
     fun updateGameBoardButton(itemIndex: Int, button: ButtonUiState) {
         buttonUiStates[itemIndex] = button
-        list[itemIndex] = turn
+        list[itemIndex] = turn.value
 
-        //lineCoordinates = checkIfWon3()
         lineCoordinates = checkIfWon2()
         //checkIfWon()
     }
 
-    private fun checkIfWon() {
-        if (list[0] == turn && list[1] == turn && list[2] == turn || list[3] == turn && list[4] == turn && list[5] == turn ||
-            list[6] == turn && list[7] == turn && list[8] == turn || list[0] == turn && list[3] == turn && list[6] == turn ||
-            list[1] == turn && list[4] == turn && list[7] == turn || list[2] == turn && list[5] == turn && list[8] == turn ||
-            list[0] == turn && list[4] == turn && list[8] == turn || list[2] == turn && list[4] == turn && list[6] == turn
-        ) {
-            showDialog.value = true
-            winner.value = if (turn == 1) R.string.player_one else R.string.player_two
-            if (turn == 1) ++highScorePlayerOne else ++highScorePlayerTwo
-        } else if (!list.contains(0)) {
-            showDialog.value = true
-            winner.value = R.string.draw
+    /*
+        private fun checkIfWon() {
+            if (list[0] == turn.value && list[1] == turn.value && list[2] == turn.value || list[3] == turn.value && list[4] == turn.value && list[5] == turn.value ||
+                list[6] == turn.value && list[7] == turn.value && list[8] == turn.value || list[0] == turn.value && list[3] == turn.value && list[6] == turn.value ||
+                list[1] == turn.value && list[4] == turn.value && list[7] == turn.value || list[2] == turn.value && list[5] == turn.value && list[8] == turn.value ||
+                list[0] == turn.value && list[4] == turn.value && list[8] == turn.value || list[2] == turn.value && list[4] == turn.value && list[6] == turn.value
+            ) {
+                showDialog.value = true
+                winner.value = if (turn.value == 1) R.string.player_one else R.string.player_two
+                if (turn.value == 1) ++highScorePlayerOne else if (turn.value == 2) ++highScorePlayerTwo
+            } else if (!list.contains(0)) {
+                showDialog.value = true
+                winner.value = R.string.draw
+            }
+
+            turn.value = if (turn.value == 1) 2 else 1
         }
-
-        turn = if (turn == 1) 2 else 1
-    }
-
+    */
     private fun checkIfWon2(): List<Float> {
         for ((rowIndex, row) in checkIfWonList.withIndex())
             for ((index, item) in row.withIndex()) {
-                if (list[item] != turn)
+                if (list[item] != turn.value)
                     break
                 if (index == gridSize - 1) {
                     showDialog.value = true
-                    winner.value = if (turn == 1) R.string.player_one else R.string.player_two
-                    if (turn == 1) ++highScorePlayerOne else ++highScorePlayerTwo
+                    winner.value = if (turn.value == 1) R.string.player_one else R.string.player_two
+                    if (turn.value == 1) ++highScorePlayerOne else ++highScorePlayerTwo
                     if (rowIndex < gridSize) {
+                        wonDirection = "|"
                         return listOf(
                             (gameBoardSizePx / (2 * gridSize) + rowIndex * (gameBoardSizePx / gridSize)),
                             0f,
@@ -113,6 +116,7 @@ class GameScreenViewModel : ViewModel() {
                             gameBoardSizePx
                         )
                     } else if (rowIndex >= gridSize && rowIndex < 2 * gridSize) {
+                        wonDirection = "-"
                         return listOf(
                             0f,
                             (gameBoardSizePx / (2 * gridSize) + (rowIndex - gridSize) * (gameBoardSizePx / gridSize)),
@@ -120,8 +124,10 @@ class GameScreenViewModel : ViewModel() {
                             (gameBoardSizePx / (2 * gridSize) + (rowIndex - gridSize) * (gameBoardSizePx / gridSize))
                         )
                     } else if (rowIndex == 2 * gridSize && gridSize % 2 != 0) {
+                        wonDirection = "\\"
                         return listOf(0f, 0f, gameBoardSizePx, gameBoardSizePx)
                     } else if (rowIndex == 2 * gridSize + 1 && gridSize % 2 != 0) {
+                        wonDirection = "/"
                         return listOf(gameBoardSizePx, 0f, 0f, gameBoardSizePx)
                     }
                 }
@@ -132,11 +138,12 @@ class GameScreenViewModel : ViewModel() {
             winner.value = R.string.draw
         }
 
-        turn = if (turn == 1) 2 else 1
+        turn.value = if (turn.value == 1) 2 else 1
 
         return listOf(0f, 0f, 0f, 0f)
     }
-
+}
+/*
     private fun checkIfWon3(): List<Float> {
         for (column in 0..(gridSize - 1) * gridSize step gridSize) {
             for (colItem in 0 until gridSize) {
@@ -195,4 +202,5 @@ class GameScreenViewModel : ViewModel() {
 
         return listOf(0f, 0f, 0f, 0f)
     }
-}
+
+ */

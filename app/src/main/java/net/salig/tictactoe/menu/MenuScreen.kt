@@ -1,4 +1,4 @@
-package net.salig.tictactoe
+package net.salig.tictactoe.menu
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,10 +15,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import net.salig.tictactoe.R
 import net.salig.tictactoe.ui.theme.Typography
 
 @Composable
-fun StartScreen(onNavigateToGameBoard: () -> Unit) {
+fun MenuScreen(onNavigateToEnterNameScreen: () -> Unit) {
     // A surface container using the 'background' color from the theme
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -48,7 +49,7 @@ fun StartScreen(onNavigateToGameBoard: () -> Unit) {
 
             Button(
                 interactionSource = MutableInteractionSource(),
-                onClick = onNavigateToGameBoard
+                onClick = onNavigateToEnterNameScreen
             )
             {
                 Text(stringResource(id = R.string.start))
