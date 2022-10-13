@@ -1,12 +1,9 @@
-package net.salig.tictactoe.menu
+package net.salig.tictactoe.presentation.menu
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +13,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.salig.tictactoe.R
-import net.salig.tictactoe.ui.theme.Typography
+import net.salig.tictactoe.core.component.LargeHeading
+import net.salig.tictactoe.core.component.TicTacToeButton
 
 @Composable
 fun MenuScreen(onNavigateToEnterNameScreen: () -> Unit) {
@@ -30,14 +28,7 @@ fun MenuScreen(onNavigateToEnterNameScreen: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Text(
-                stringResource(id = R.string.app_name),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize()
-                    .padding(top = dimensionResource(id = R.dimen.padding_text)),
-                style = Typography.h2
-            )
+            LargeHeading(text = stringResource(id = R.string.app_name))
 
             Image(
                 painterResource(id = R.drawable.image),
@@ -47,13 +38,7 @@ fun MenuScreen(onNavigateToEnterNameScreen: () -> Unit) {
                     .padding(dimensionResource(id = R.dimen.padding_default))
             )
 
-            Button(
-                interactionSource = MutableInteractionSource(),
-                onClick = onNavigateToEnterNameScreen
-            )
-            {
-                Text(stringResource(id = R.string.start))
-            }
+            TicTacToeButton(stringResource(id = R.string.start)) { onNavigateToEnterNameScreen() }
 
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_default)))
         }

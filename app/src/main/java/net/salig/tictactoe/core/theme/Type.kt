@@ -1,4 +1,4 @@
-package net.salig.tictactoe.ui.theme
+package net.salig.tictactoe.core.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

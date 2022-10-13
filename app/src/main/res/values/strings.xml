@@ -17,11 +17,12 @@
     <string name="yes_rematch">Yes, rematch!</string>
     <string name="rematch">Do you want a rematch?</string>
     <string name="next_match">Do you want to play the next match?</string>
-    <string name="won">&#160;Won</string>
+    <string name="won">&#160;won</string>
     <string name="no">No</string>
     <string name="draw">Draw</string>
     <string name="title_activity_main2">MainActivity2</string>
 
+    <string name="error">error</string>
     <string name="error_message_length">Name to long</string>
     <string name="error_message_symbols">Contains forbidden Symbols</string>
 </resources>

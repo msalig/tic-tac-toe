@@ -1,22 +1,33 @@
-package net.salig.tictactoe.util
+package net.salig.tictactoe.core.component
 
-import android.annotation.SuppressLint
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.delay
 import net.salig.tictactoe.R
-import net.salig.tictactoe.ui.theme.TicTacToeTheme
+import net.salig.tictactoe.presentation.game.Player
+
+@Composable
+fun StartDialogDelay(isShowDialog: Boolean, setShowDialogAfterDelay: (Boolean) -> Unit) {
+    if (isShowDialog) {
+        LaunchedEffect(Unit) {
+            delay(500L)
+            setShowDialogAfterDelay(true)
+        }
+    }
+}
 
 @Composable
 fun RematchDialog(
+    playerNameOne: String?,
+    playerNameTwo: String?,
     winner: Int,
     hideDialog: () -> Unit,
-    setTurn: (Int) -> Unit,
     resetButtonUiStates: () -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = {
@@ -26,7 +37,10 @@ fun RematchDialog(
         },
         title = {
             Text(
-                text = if (winner != R.string.draw) stringResource(id = winner) + stringResource(id = R.string.won)
+                text = if (winner != R.string.draw && winner == Player.ONE.initialPlayerName) playerNameOne + stringResource(
+                    id = R.string.won)
+                else if (winner != R.string.draw && winner == Player.TWO.initialPlayerName) playerNameTwo + stringResource(
+                    id = R.string.won)
                 else stringResource(id = R.string.draw)
             )
         },
@@ -39,10 +53,6 @@ fun RematchDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    when (winner) {
-                        R.string.player_one -> setTurn(2)
-                        R.string.player_two -> setTurn(1)
-                    }
                     resetButtonUiStates()
                     hideDialog()
                 }
@@ -61,13 +71,4 @@ fun RematchDialog(
             }
         }
     )
-}
-
-@SuppressLint("UnrememberedMutableState")
-@Preview
-@Composable
-fun RematchDialogPreview() {
-    TicTacToeTheme {
-        RematchDialog(R.string.nothing, { }, {}, {}, {})
-    }
 }

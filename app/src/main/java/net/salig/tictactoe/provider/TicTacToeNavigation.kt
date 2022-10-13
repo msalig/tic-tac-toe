@@ -1,14 +1,14 @@
-package net.salig.tictactoe
+package net.salig.tictactoe.provider
 
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import net.salig.tictactoe.TicTacToeDestinations.ENTER_NAMES_ROUTE
-import net.salig.tictactoe.TicTacToeDestinations.MENU_ROUTE
-import net.salig.tictactoe.TicTacToeDestinationsArgs.PLAYER_NAME_ONE_ARG
-import net.salig.tictactoe.TicTacToeDestinationsArgs.PLAYER_NAME_TWO_ARG
-import net.salig.tictactoe.TicTacToeScreens.ENTER_NAMES_SCREEN
-import net.salig.tictactoe.TicTacToeScreens.GAME_SCREEN
-import net.salig.tictactoe.TicTacToeScreens.MENU_SCREEN
+import net.salig.tictactoe.provider.TicTacToeDestinations.ENTER_NAMES_ROUTE
+import net.salig.tictactoe.provider.TicTacToeDestinations.MENU_ROUTE
+import net.salig.tictactoe.provider.TicTacToeDestinationsArgs.PLAYER_NAME_ONE_ARG
+import net.salig.tictactoe.provider.TicTacToeDestinationsArgs.PLAYER_NAME_TWO_ARG
+import net.salig.tictactoe.provider.TicTacToeScreens.ENTER_NAMES_SCREEN
+import net.salig.tictactoe.provider.TicTacToeScreens.GAME_SCREEN
+import net.salig.tictactoe.provider.TicTacToeScreens.MENU_SCREEN
 
 /**
  * Screens used in [TicTacToeDestinations]
@@ -28,7 +28,7 @@ object TicTacToeDestinationsArgs {
 }
 
 /**
- * Destinations used in the [TicTacToeActivity]
+ * Destinations used in the [net.salig.tictactoe.presentation.TicTacToeActivity]
  */
 object TicTacToeDestinations {
     const val MENU_ROUTE = MENU_SCREEN

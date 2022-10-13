@@ -1,4 +1,4 @@
-package net.salig.tictactoe
+package net.salig.tictactoe.provider
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -9,11 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import net.salig.tictactoe.TicTacToeDestinationsArgs.PLAYER_NAME_ONE_ARG
-import net.salig.tictactoe.TicTacToeDestinationsArgs.PLAYER_NAME_TWO_ARG
-import net.salig.tictactoe.enternames.EnterNamesScreen
-import net.salig.tictactoe.game.GameScreen
-import net.salig.tictactoe.menu.MenuScreen
+import net.salig.tictactoe.presentation.enternames.EnterNamesScreen
+import net.salig.tictactoe.presentation.game.GameScreen
+import net.salig.tictactoe.presentation.menu.MenuScreen
+import net.salig.tictactoe.provider.TicTacToeDestinationsArgs.PLAYER_NAME_ONE_ARG
+import net.salig.tictactoe.provider.TicTacToeDestinationsArgs.PLAYER_NAME_TWO_ARG
 
 @Composable
 fun TicTacToeNavGraph(
