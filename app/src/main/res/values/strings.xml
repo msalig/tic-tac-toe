@@ -3,6 +3,7 @@
 
     <string name="player_one">Player 1</string>
     <string name="player_two">Player 2</string>
+    <string name="player_name_placeholder">Player name</string>
     <string name="cross">Cross</string>
     <string name="circle">Circle</string>
     <string name="turn">\'s turn</string>
@@ -20,9 +21,20 @@
     <string name="won">&#160;won</string>
     <string name="no">No</string>
     <string name="draw">Draw</string>
-    <string name="title_activity_main2">MainActivity2</string>
 
-    <string name="error">error</string>
+    <string name="error">Error</string>
     <string name="error_message_length">Name to long</string>
     <string name="error_message_symbols">Contains forbidden Symbols</string>
+
+    <string name="ok">Okay</string>
+    <string name="error_connection_lost">Your device lost the connection or your opponent left the game. \n\nReturn to menu.</string>
+    <string name="waiting_for_player">Waiting for other Player to start the game…</string>
+    <string name="join">Join</string>
+    <string name="joining">Joining…</string>
+    <string name="host">Host</string>
+    <string name="hosting">Hosting…</string>
+    <string name="start_game">Start game</string>
+    <string name="local_network_multiplayer">Local network multiplayer</string>
+    <string name="local_multiplayer">Local multiplayer</string>
+
 </resources>

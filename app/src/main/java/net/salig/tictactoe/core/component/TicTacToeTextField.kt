@@ -25,26 +25,27 @@ import net.salig.tictactoe.R
 
 class TicTacToeTextField {
 
-    fun validate(text: String): TextFieldError {
-        if (text.length > 15)
-            return TextFieldError(R.string.error_message_length, true)
-        else if (!text.matches(Regex("^[a-zA-Z0-9. ]*\$")))
-            return TextFieldError(R.string.error_message_symbols, true)
+    fun validate(text: String): TextFieldError =
+        when {
+            (text.length > 15) -> TextFieldError(R.string.error_message_length, true)
 
-        return TextFieldError(
-            R.string.nothing,
-            !(text.matches(Regex("^[a-zA-Z0-9. ]*\$")) && text.length < 15)
-        )
-    }
+            !text.matches(Regex("^[a-zA-Z0-9. ]*\$")) -> TextFieldError(R.string.error_message_symbols,
+                true)
+
+            else -> TextFieldError(R.string.nothing,
+                !(text.matches(Regex("^[a-zA-Z0-9. ]*\$")) && text.length < 15))
+        }
 
     lateinit var label: String
 
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun TextField(
+        modifier: Modifier = Modifier,
         label: String,
         playerName: String,
         isError: Boolean,
+        enabled: Boolean = true,
         @StringRes errorMessage: Int,
         updateError: (TextFieldError) -> Unit,
         updatePlayerName: (String) -> Unit,
@@ -56,27 +57,25 @@ class TicTacToeTextField {
             this@TicTacToeTextField.label = label
         }
 
-        Column {
-            OutlinedTextField(
+        Column(modifier = modifier) {
+            OutlinedTextField(enabled = enabled,
+                modifier = modifier,
                 value = playerName,
                 placeholder = {
                     Text(label)
                 },
                 onValueChange = {
                     updatePlayerName(it)
-                    updateError(TextFieldError(R.string.nothing, false))
+                    updateError(validate(it))
                 },
                 trailingIcon = {
-                    if (isError)
-                        Icon(Icons.Default.Warning,
-                            stringResource(id = R.string.error),
-                            tint = MaterialTheme.colors.error)
+                    if (isError) Icon(Icons.Default.Warning,
+                        stringResource(id = R.string.error),
+                        tint = MaterialTheme.colors.error)
                 },
                 singleLine = true,
                 label = {
-                    Text(
-                        if (isError) "$label *" else label
-                    )
+                    Text(if (isError) "$label *" else label)
                 },
                 isError = isError,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -87,15 +86,12 @@ class TicTacToeTextField {
                             updateError(validate(playerName))
                         }
                     },
-                )
-            )
+                ))
             if (isError) {
-                Text(
-                    text = stringResource(id = errorMessage),
+                Text(text = stringResource(id = errorMessage),
                     color = MaterialTheme.colors.error,
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+                    modifier = Modifier.padding(start = 16.dp))
             }
         }
     }

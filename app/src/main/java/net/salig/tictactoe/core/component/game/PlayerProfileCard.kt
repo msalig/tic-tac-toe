@@ -1,4 +1,4 @@
-package net.salig.tictactoe.presentation.game
+package net.salig.tictactoe.core.component.game
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -14,16 +14,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import net.salig.tictactoe.R
+import net.salig.tictactoe.data.model.Player
 
 @Composable
 fun PlayerProfileCard(
     player: Player,
     playerName: String?,
-    getTurn: () -> Int,
+    getTurn: () -> String,
 ) {
     Card(elevation = dimensionResource(id = R.dimen.elevation_default),
         shape = RoundedCornerShape(dimensionResource(id = R.dimen.rounded_corners)),
-        backgroundColor = if (getTurn() == player.playerNumber) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
+        backgroundColor = if (getTurn() == playerName) MaterialTheme.colors.secondary else MaterialTheme.colors.surface,
         modifier = Modifier
             .height(dimensionResource(id = R.dimen.player_card_height))
             .width(dimensionResource(id = R.dimen.player_card_width))) {
@@ -36,7 +37,7 @@ fun PlayerProfileCard(
                 contentDescription = stringResource(id = player.drawableContentDescription))
 
             Text(text = StringBuilder().append(playerName)
-                .append(if (getTurn() == player.playerNumber) stringResource(id = R.string.turn) else stringResource(
+                .append(if (getTurn() == playerName) stringResource(id = R.string.turn) else stringResource(
                     id = R.string.nothing)).toString(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = dimensionResource(id = R.dimen.padding_text)))

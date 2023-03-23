@@ -1,4 +1,4 @@
-package net.salig.tictactoe.presentation.game
+package net.salig.tictactoe.core.component.game
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

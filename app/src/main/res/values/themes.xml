@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.TicTacToe" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.TicTacToe" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/purple_700</item>
     </style>
+
+    <style name="Cake" parent="Theme.TicTacToe">
+
+    </style>
+
+    <style name="Cake.ButtonTheme" parent="Cake">
+        <item name="android:backgroundTint">@color/brand_primary_base</item>
+        <item name="android:textColor">@color/basic_white</item>
+        <item name="backgroundTint">@color/brand_primary_base</item>
+    </style>
+
 </resources>

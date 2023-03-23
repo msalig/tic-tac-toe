@@ -1,4 +1,4 @@
-package net.salig.tictactoe.presentation.game
+package net.salig.tictactoe.data.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

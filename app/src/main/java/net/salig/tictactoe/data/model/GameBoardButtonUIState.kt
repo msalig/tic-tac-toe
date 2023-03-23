@@ -1,12 +1,13 @@
-package net.salig.tictactoe.presentation.game
+package net.salig.tictactoe.data.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import net.salig.tictactoe.R
-import net.salig.tictactoe.core.InitialGridSize
+import net.salig.tictactoe.core.Constants.InitialGridSize
 import net.salig.tictactoe.core.theme.CircleBlue
 import net.salig.tictactoe.core.theme.CrossRed
+import net.salig.tictactoe.data.serialization.model.Coordinates
 
 enum class GameBoardButtonUIState(
     @DrawableRes val drawable: Int,
@@ -25,11 +26,11 @@ enum class GameBoardButtonUIState(
 
         fun updateArrButtonUIState(
             uiStates: Array<Array<GameBoardButtonUIState>>,
-            arrPos: ItemPositionInArray,
+            arrPos: Coordinates,
             newState: GameBoardButtonUIState,
         ): Array<Array<GameBoardButtonUIState>> {
             val newArr = uiStates.copyOf()
-            newArr[arrPos.row][arrPos.item] = newState
+            newArr[arrPos.y][arrPos.x] = newState
             return newArr
         }
     }

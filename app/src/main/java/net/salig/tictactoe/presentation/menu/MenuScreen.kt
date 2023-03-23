@@ -17,7 +17,7 @@ import net.salig.tictactoe.core.component.LargeHeading
 import net.salig.tictactoe.core.component.TicTacToeButton
 
 @Composable
-fun MenuScreen(onNavigateToEnterNameScreen: () -> Unit) {
+fun MenuScreen(onNavigateToGamemode: () -> Unit) {
     // A surface container using the 'background' color from the theme
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -37,8 +37,7 @@ fun MenuScreen(onNavigateToEnterNameScreen: () -> Unit) {
                     .size(LocalConfiguration.current.screenWidthDp.dp)
                     .padding(dimensionResource(id = R.dimen.padding_default))
             )
-
-            TicTacToeButton(stringResource(id = R.string.start)) { onNavigateToEnterNameScreen() }
+            TicTacToeButton(stringResource(id = R.string.start)) { onNavigateToGamemode() }
 
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_default)))
         }

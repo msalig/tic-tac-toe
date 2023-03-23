@@ -1,6 +1,6 @@
 package net.salig.tictactoe.domain
 
-import net.salig.tictactoe.core.InitialGridSize
+import net.salig.tictactoe.core.Constants.InitialGridSize
 
 inline fun <reified T> Array<T>.containsOnly(element: T): Boolean {
     return this.contentEquals(Array(this.size) { element })
@@ -13,14 +13,14 @@ inline fun <reified T> Array<Array<T>>.colContainsOnly(colIndex: Int, element: T
     return a.containsOnly(element)
 }
 
-inline fun <reified T> Array<Array<T>>.diagonalLeftTopRightBottomContainsOnly(element: T): Boolean {
+inline fun <reified T> Array<Array<T>>.diagonalTopLeftBottomRightContainsOnly(element: T): Boolean {
     val a: Array<T?> = arrayOfNulls<T>(this.size)
     for (i in 0 until this.size)
         a[i] = this[i][i]
     return a.containsOnly(element)
 }
 
-inline fun <reified T> Array<Array<T>>.diagonalRightTopLeftBottomContainsOnly(element: T): Boolean {
+inline fun <reified T> Array<Array<T>>.diagonalTopRightBottomLeftContainsOnly(element: T): Boolean {
     val a: Array<T?> = arrayOfNulls<T>(this.size)
     for (i in 0 until this.size)
         a[i] = this[i][InitialGridSize - 1 - i]
@@ -28,7 +28,7 @@ inline fun <reified T> Array<Array<T>>.diagonalRightTopLeftBottomContainsOnly(el
 }
 
 inline fun <reified T> Array<Array<T>>.diagonallyContainsOnly(element: T): Boolean {
-    return this.diagonalRightTopLeftBottomContainsOnly(element) || this.diagonalLeftTopRightBottomContainsOnly(
+    return this.diagonalTopRightBottomLeftContainsOnly(element) || this.diagonalTopLeftBottomRightContainsOnly(
         element)
 }
 

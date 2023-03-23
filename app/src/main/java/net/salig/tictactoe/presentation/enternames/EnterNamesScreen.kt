@@ -19,7 +19,7 @@ import net.salig.tictactoe.core.component.TicTacToeTextField
 
 @Composable
 fun EnterNamesScreen(
-    onNavigateToGameScreen: (String?, String?) -> Unit,
+    onNavigateToGameScreen: (String, String) -> Unit,
     viewModel: EnterNamesViewModel = viewModel(),
 ) {
     val fieldOne = remember { mutableStateOf(TicTacToeTextField()) }

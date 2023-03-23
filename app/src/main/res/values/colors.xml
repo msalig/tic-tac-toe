@@ -7,4 +7,33 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="brand_primary_base">#6E1E6E</color>
+    <color name="brand_secondary_base">#41053C</color>
+    <color name="brand_info_base">#5F7DAA</color>
+    <color name="brand_info_dark">#4B6487</color>
+    <color name="brand_info_darker">#3C506E</color>
+    <color name="brand_info_darkest">#2D3C50</color>
+    <color name="brand_attention_base">#FFD746</color>
+    <color name="brand_attention_dark">#E6B43C</color>
+    <color name="brand_attention_darker">#C8912D</color>
+    <color name="brand_attention_darkest">#AF6E00</color>
+    <color name="brand_danger_base">#E3000F</color>
+    <color name="brand_danger_dark">#B5000C</color>
+    <color name="brand_danger_darker">#880009</color>
+    <color name="brand_danger_darkest">#5A0006</color>
+    <color name="brand_success_base">#05A54B</color>
+    <color name="brand_success_dark">#04843C</color>
+    <color name="brand_success_darker">#03632D</color>
+    <color name="brand_success_darkest">#02421E</color>
+    <color name="mark_base">#FFF000</color>
+    <color name="gray_base">#878787</color>
+    <color name="gray_background">#FAFAFA</color>
+    <color name="gray_lightest">#EBEBEB</color>
+    <color name="gray_lighter">#C6C6C6</color>
+    <color name="gray_light">#9D9D9D</color>
+    <color name="gray_dark">#505050</color>
+    <color name="basic_white">#FFFFFF</color>
+    <color name="basic_black">#000000</color>
+
 </resources>
