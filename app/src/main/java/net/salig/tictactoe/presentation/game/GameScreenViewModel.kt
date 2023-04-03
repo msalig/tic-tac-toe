@@ -135,8 +135,12 @@ class GameScreenViewModel : ViewModel() {
     private fun decodeReceivedData(receivedData: String) {
         try {
             val element = Json.decodeFromString(JsonSerializer(), receivedData)
-            //TODO: Handling for the same usernames
             if (element is Username) {
+                if (element.name == state.selfPlayerName && !isHost) {
+                    state = state.copy(selfPlayerName = state.selfPlayerName.plus(" 2"))
+                    exchangeUsernames()
+                }
+
                 state = state.copy(otherPlayerName = element.name)
 
                 if (state.otherPlayerHighscore == 0 && state.selfPlayerHighscore == 0) {

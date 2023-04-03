@@ -63,29 +63,25 @@ fun GamemodeScreen(
                             viewModel.state = viewModel.state.copy(selfPlayerName = it)
                         })
 
-                    Button(modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            if (!viewModel.isHost) {
-                                viewModel.hostGame(context)
-                            } else {
-                                viewModel.stopHosting()
-                                viewModel.isConnected = false
-                            }
-                        },
-                        enabled = !viewModel.isJoin && viewModel.state.selfPlayerName.isNotEmpty()) {
+                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                        if (!viewModel.isHost) {
+                            viewModel.hostGame(context)
+                        } else {
+                            viewModel.stopHosting()
+                            viewModel.isConnected = false
+                        }
+                    }, enabled = !viewModel.isJoin && viewModel.state.selfPlayerName.isNotEmpty()) {
                         Text(text = stringResource(id = if (!viewModel.isHost) R.string.host else R.string.hosting))
                     }
 
-                    Button(modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            if (!viewModel.isJoin) {
-                                viewModel.joinGame(context)
-                            } else {
-                                viewModel.stopJoining()
-                                viewModel.isConnected = false
-                            }
-                        },
-                        enabled = !viewModel.isHost && viewModel.state.selfPlayerName.isNotEmpty()) {
+                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                        if (!viewModel.isJoin) {
+                            viewModel.joinGame(context)
+                        } else {
+                            viewModel.stopJoining()
+                            viewModel.isConnected = false
+                        }
+                    }, enabled = !viewModel.isHost && viewModel.state.selfPlayerName.isNotEmpty()) {
                         Text(text = stringResource(id = if (!viewModel.isJoin) R.string.join else R.string.joining))
                     }
 
