@@ -26,7 +26,6 @@ class GameScreenViewModel : ViewModel() {
     var isJoin by mutableStateOf(false)
     var isHost by mutableStateOf(false)
     var isConnected by mutableStateOf(false)
-    var isGameScreenOnCreate by mutableStateOf(false)
     var isWaitingForRematchResponse by mutableStateOf(false)
     private var receivedRematchResponse by mutableStateOf(false)
 
@@ -38,7 +37,7 @@ class GameScreenViewModel : ViewModel() {
     fun finishTurn(coordinates: Coordinates) {
         val newField = state.field.copyOf()
         newField[coordinates.y][coordinates.x] =
-            if ((isLocalNetworkMultiplayer && isHost) || state.playerAtTurn == state.selfPlayerName) 'X' else 'O'
+            if ((isLocalNetworkMultiplayer && isHost) || (!isLocalNetworkMultiplayer && state.playerAtTurn == state.selfPlayerName)) 'X' else 'O'
 
         if (isLocalNetworkMultiplayer) {
             messageHandler.sendData(Json.encodeToString(coordinates))

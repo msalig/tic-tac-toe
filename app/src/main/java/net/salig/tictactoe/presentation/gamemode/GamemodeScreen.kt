@@ -21,7 +21,7 @@ import net.salig.tictactoe.presentation.game.GameScreenViewModel
 @Composable
 fun GamemodeScreen(
     onNavigateToEnterNamesScreen: () -> Unit,
-    onNavigateToGameScreen: (String, String) -> Unit,
+    onNavigateToGameScreen: () -> Unit,
     viewModel: GameScreenViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -94,7 +94,7 @@ fun GamemodeScreen(
                         onClick = {
                             viewModel.exchangeUsernames()
 
-                            onNavigateToGameScreen("null", "null")
+                            onNavigateToGameScreen()
                         }) {
                         Text(text = stringResource(id = R.string.start_game))
                     }

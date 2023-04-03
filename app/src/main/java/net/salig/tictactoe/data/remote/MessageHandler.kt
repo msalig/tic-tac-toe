@@ -59,6 +59,7 @@ class MessageHandler(
             }
         }
 
+        Log.d(TAG, "Disconnected")
         setConnected(false)
     }
 

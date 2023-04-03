@@ -69,6 +69,7 @@ class NSDAdvertise(private val context: Context, private val socketServer: Socke
 
     fun shutdown() {
         try {
+            //TODO: Do not attempt unregister Listener when it isn't registered
             nsdManager.unregisterService(registrationListener)
             socketServer.close()
         } catch (e: Exception) {

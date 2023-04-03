@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.salig.tictactoe.R
-import net.salig.tictactoe.data.model.GameBoardButtonUIState
+import net.salig.tictactoe.data.model.GameBoardButtonUIStates
 import net.salig.tictactoe.data.model.GameState
 import net.salig.tictactoe.data.serialization.model.Coordinates
 
@@ -27,7 +27,7 @@ import net.salig.tictactoe.data.serialization.model.Coordinates
 fun GameBoard(
     state: GameState,
     screenWidth: Int,
-    isShowDialog: Boolean,
+    isLocalNetworkMultiplayer: Boolean,
     gridSize: Int,
     onTapInField: (Coordinates) -> Unit,
 ) {
@@ -50,14 +50,14 @@ fun GameBoard(
                 this@LazyVerticalGrid.itemsIndexed(row) { itemIndex, item ->
 
                     val buttonState = when (item) {
-                        'X' -> GameBoardButtonUIState.CROSS
-                        'O' -> GameBoardButtonUIState.CIRCLE
-                        else -> GameBoardButtonUIState.NOTHING
+                        'X' -> GameBoardButtonUIStates.CROSS
+                        'O' -> GameBoardButtonUIStates.CIRCLE
+                        else -> GameBoardButtonUIStates.NOTHING
                     }
 
                     IconButton(
                         interactionSource = MutableInteractionSource(), onClick = {
-                            if (buttonState == GameBoardButtonUIState.NOTHING && !isShowDialog) {
+                            if (buttonState == GameBoardButtonUIStates.NOTHING && (!isLocalNetworkMultiplayer || state.playerAtTurn == state.selfPlayerName)) {
                                 onTapInField(Coordinates(itemIndex, rowIndex))
                             }
                         }, modifier = Modifier

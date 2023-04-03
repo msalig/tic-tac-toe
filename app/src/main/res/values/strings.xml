@@ -28,7 +28,7 @@
 
     <string name="ok">Okay</string>
     <string name="error_connection_lost">Your device lost the connection or your opponent left the game. \n\nReturn to menu.</string>
-    <string name="waiting_for_player">Waiting for other Player to start the game…</string>
+    <string name="waiting_for_player">Waiting for other player…</string>
     <string name="join">Join</string>
     <string name="joining">Joining…</string>
     <string name="host">Host</string>

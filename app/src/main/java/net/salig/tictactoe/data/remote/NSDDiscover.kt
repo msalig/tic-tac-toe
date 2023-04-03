@@ -88,6 +88,7 @@ class NSDDiscover(
 
     fun shutdown() {
         try {
+            //TODO: Do not attempt stop listener when it isn't even registered
             nsdManager.stopServiceDiscovery(discoveryListener)
             client.close()
         } catch (e: Exception) {
