@@ -110,12 +110,14 @@ class GameScreenViewModel : ViewModel() {
     }
 
     fun shutdown() {
-        state = GameState()
-
         stopHosting()
         stopJoining()
 
         isLocalNetworkMultiplayer = false
+        isWaitingForRematchResponse = false
+        receivedRematchResponse = false
+
+        state = GameState()
     }
 
     fun stopHosting() {
@@ -136,8 +138,8 @@ class GameScreenViewModel : ViewModel() {
         try {
             val element = Json.decodeFromString(JsonSerializer(), receivedData)
             if (element is Username) {
-                if (element.name == state.selfPlayerName && !isHost) {
-                    state = state.copy(selfPlayerName = state.selfPlayerName.plus(" 2"))
+                if (element.name == state.selfPlayerName && isHost) {
+                    state = state.copy(selfPlayerName = state.selfPlayerName.plus(" Host"))
                     exchangeUsernames()
                 }
 

@@ -22,11 +22,9 @@ class NSDDiscover(
         if (currentDiscoveryStatus == DISCOVERY_STATUS.ON) return
         Toast.makeText(context, "Discover services!", Toast.LENGTH_LONG).show()
         currentDiscoveryStatus = DISCOVERY_STATUS.ON
-        nsdManager.discoverServices(
-            Constants.SERVICE_TYPE,
+        nsdManager.discoverServices(Constants.SERVICE_TYPE,
             NsdManager.PROTOCOL_DNS_SD,
-            discoveryListener
-        )
+            discoveryListener)
     }
 
     private var resolveListener: NsdManager.ResolveListener = object : NsdManager.ResolveListener {
@@ -38,6 +36,7 @@ class NSDDiscover(
             Log.e(TAG, "Resolve Succeeded. $serviceInfo")
 
             Toast.makeText(context, "Found a connection!", Toast.LENGTH_LONG).show()
+            currentDiscoveryStatus = DISCOVERY_STATUS.OFF
             nsdManager.stopServiceDiscovery(discoveryListener)
             setHostAndPortValues(serviceInfo)
 
@@ -88,9 +87,10 @@ class NSDDiscover(
 
     fun shutdown() {
         try {
-            //TODO: Do not attempt stop listener when it isn't even registered
-            nsdManager.stopServiceDiscovery(discoveryListener)
             client.close()
+            if (currentDiscoveryStatus == DISCOVERY_STATUS.ON) {
+                nsdManager.stopServiceDiscovery(discoveryListener)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

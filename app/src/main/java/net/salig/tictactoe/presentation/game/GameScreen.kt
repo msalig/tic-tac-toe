@@ -86,8 +86,8 @@ fun GameScreen(
                     viewModel.showRematchDialog = false
                     viewModel.showRematchDialogAfterDelay = false
                 }, navigateBack = {
-                    onNavigateToMenu()
                     viewModel.shutdown()
+                    onNavigateToMenu()
                 }, rematch = viewModel::rematch)
             }
 
@@ -97,8 +97,8 @@ fun GameScreen(
                 ConnectionLostDialog {
                     viewModel.showRematchDialog = false
                     viewModel.showRematchDialogAfterDelay = false
-                    onNavigateToMenu()
                     viewModel.shutdown()
+                    onNavigateToMenu()
                 }
             }
 
@@ -109,8 +109,8 @@ fun GameScreen(
         }
 
         BackHandler {
-            onNavigateToMenu()
             viewModel.shutdown()
+            onNavigateToMenu()
         }
     }
 }

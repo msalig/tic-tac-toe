@@ -33,10 +33,8 @@ class NSDAdvertise(private val context: Context, private val socketServer: Socke
         if (selectedPort > -1) {
             setupDeviceRegistration()
         } else {
-            Log.d(
-                TAG,
-                "No Socket available..., make sure this method is called after createServerThread has been executed..."
-            )
+            Log.d(TAG,
+                "No Socket available..., make sure this method is called after createServerThread has been executed...")
         }
     }
 
@@ -56,10 +54,8 @@ class NSDAdvertise(private val context: Context, private val socketServer: Socke
         override fun onServiceRegistered(NsdServiceInfo: NsdServiceInfo) {
             discoveryServiceName = NsdServiceInfo.serviceName
             Toast.makeText(context, "Registered device!", Toast.LENGTH_LONG).show()
-            Log.e(
-                TAG,
-                "This device has been registered to be discovered through NSD...:$discoveryServiceName"
-            )
+            Log.e(TAG,
+                "This device has been registered to be discovered through NSD...:$discoveryServiceName")
         }
 
         override fun onRegistrationFailed(arg0: NsdServiceInfo, arg1: Int) {}
@@ -69,9 +65,10 @@ class NSDAdvertise(private val context: Context, private val socketServer: Socke
 
     fun shutdown() {
         try {
-            //TODO: Do not attempt unregister Listener when it isn't registered
-            nsdManager.unregisterService(registrationListener)
             socketServer.close()
+            if (currentRegistrationStatus == REGISTRATION_STATUS.REGISTERED) {
+                nsdManager.unregisterService(registrationListener)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
