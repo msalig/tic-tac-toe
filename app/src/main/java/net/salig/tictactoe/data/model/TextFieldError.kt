@@ -1,4 +1,4 @@
-package net.salig.tictactoe.core.component
+package net.salig.tictactoe.data.model
 
 import androidx.annotation.StringRes
 import net.salig.tictactoe.R

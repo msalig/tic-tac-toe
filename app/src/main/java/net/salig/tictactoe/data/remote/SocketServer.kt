@@ -34,7 +34,7 @@ class SocketServer(
     fun startServer() {
         Thread {
             try {
-                Log.d(TAG, "serverSocket waiting for connection to accept ...")
+                Log.d(TAG, "ServerSocket waiting for connection to accept ...")
                 socket = serverSocket.accept()
 
                 if (socket!!.isConnected) {

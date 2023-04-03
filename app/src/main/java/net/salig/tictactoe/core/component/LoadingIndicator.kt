@@ -35,7 +35,7 @@ fun LoadingIndicator(
 ) {
     ////// animation //////
 
-    // docs recomend use transition animation for infinite loops
+    // docs recommend use transition animation for infinite loops
     // https://developer.android.com/jetpack/compose/animation
     val transition = rememberInfiniteTransition()
 

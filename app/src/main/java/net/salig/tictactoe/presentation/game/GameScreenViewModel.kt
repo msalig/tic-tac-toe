@@ -18,7 +18,7 @@ class GameScreenViewModel : ViewModel() {
     private var nsdDiscover: NSDDiscover? = null
     private var nsdAdvertise: NSDAdvertise? = null
     private var socketClient: SocketClient? = null
-    private var serverSocket: SocketServer? = null
+    private var socketServer: SocketServer? = null
     private var messageHandler = MessageHandler(returnReceivedData = { decodeReceivedData(it) },
         setConnected = { isConnected = it })
 
@@ -30,8 +30,8 @@ class GameScreenViewModel : ViewModel() {
     private var receivedRematchResponse by mutableStateOf(false)
 
     private var buttonsAlreadyClicked = 0
+    var startRematchDialogDelay by mutableStateOf(false)
     var showRematchDialog by mutableStateOf(false)
-    var showRematchDialogAfterDelay by mutableStateOf(false)
     var state by mutableStateOf(GameState())
 
     fun finishTurn(coordinates: Coordinates) {
@@ -50,13 +50,15 @@ class GameScreenViewModel : ViewModel() {
 
 
     private fun updateState(coordinates: Coordinates, field: Array<Array<Char?>>) {
-        state =
-            state.copy(playerAtTurn = if (state.playerAtTurn == state.selfPlayerName) state.otherPlayerName
-            else state.selfPlayerName, field = field)
+        state = state.copy(playerAtTurn = if (state.playerAtTurn == state.selfPlayerName) {
+            state.otherPlayerName
+        } else {
+            state.selfPlayerName
+        }, field = field)
 
         if (buttonsAlreadyClicked >= 4) {
             checkIfSomeoneWon(state.field, coordinates, setWon = {
-                showRematchDialog = true
+                startRematchDialogDelay = true
                 state = when (it) {
                     true -> {
                         if (state.playerAtTurn != state.selfPlayerName) {
@@ -92,11 +94,11 @@ class GameScreenViewModel : ViewModel() {
     fun hostGame(context: Context) {
         isHost = true
         var port = -1
-        serverSocket = SocketServer(messageHandler,
+        socketServer = SocketServer(messageHandler,
             setSelectedPort = { port = it },
             setConnected = { isConnected = it })
 
-        nsdAdvertise = NSDAdvertise(context, serverSocket!!)
+        nsdAdvertise = NSDAdvertise(context, socketServer!!)
         nsdAdvertise?.registerDevice(port)
     }
 
@@ -107,27 +109,6 @@ class GameScreenViewModel : ViewModel() {
 
         nsdDiscover = NSDDiscover(context, socketClient!!)
         nsdDiscover?.discoverServices()
-    }
-
-    fun shutdown() {
-        stopHosting()
-        stopJoining()
-
-        isLocalNetworkMultiplayer = false
-        isWaitingForRematchResponse = false
-        receivedRematchResponse = false
-
-        state = GameState()
-    }
-
-    fun stopHosting() {
-        nsdAdvertise?.shutdown()
-        isHost = false
-    }
-
-    fun stopJoining() {
-        nsdDiscover?.shutdown()
-        isJoin = false
     }
 
     fun exchangeUsernames() {
@@ -162,5 +143,31 @@ class GameScreenViewModel : ViewModel() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun shutdown() {
+        stopHosting()
+        stopJoining()
+
+        isLocalNetworkMultiplayer = false
+        isWaitingForRematchResponse = false
+        receivedRematchResponse = false
+
+        state = GameState()
+    }
+
+    fun stopHosting() {
+        nsdAdvertise?.shutdown()
+        isHost = false
+    }
+
+    fun stopJoining() {
+        nsdDiscover?.shutdown()
+        isJoin = false
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        shutdown()
     }
 }

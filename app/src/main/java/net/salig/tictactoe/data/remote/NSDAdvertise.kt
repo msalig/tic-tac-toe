@@ -5,10 +5,9 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdManager.RegistrationListener
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import android.widget.Toast
 import net.salig.tictactoe.core.Constants
 
-class NSDAdvertise(private val context: Context, private val socketServer: SocketServer) {
+class NSDAdvertise(context: Context, private val socketServer: SocketServer) {
     private val nsdManager: NsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
     var discoveryServiceName = "TicTacToeService"
     private var selectedPort = -1
@@ -31,14 +30,14 @@ class NSDAdvertise(private val context: Context, private val socketServer: Socke
 
         if (currentRegistrationStatus == REGISTRATION_STATUS.REGISTERED) return
         if (selectedPort > -1) {
-            setupDeviceRegistration()
+            registerService()
         } else {
             Log.d(TAG,
                 "No Socket available..., make sure this method is called after createServerThread has been executed...")
         }
     }
 
-    private fun setupDeviceRegistration() {
+    private fun registerService() {
         val serviceInfo = NsdServiceInfo()
         serviceInfo.port = selectedPort
         serviceInfo.serviceName = discoveryServiceName
@@ -53,7 +52,7 @@ class NSDAdvertise(private val context: Context, private val socketServer: Socke
     private val registrationListener: RegistrationListener = object : RegistrationListener {
         override fun onServiceRegistered(NsdServiceInfo: NsdServiceInfo) {
             discoveryServiceName = NsdServiceInfo.serviceName
-            Toast.makeText(context, "Registered device!", Toast.LENGTH_LONG).show()
+            //Toast.makeText(context, "Registered device!", Toast.LENGTH_LONG).show()
             Log.e(TAG,
                 "This device has been registered to be discovered through NSD...:$discoveryServiceName")
         }

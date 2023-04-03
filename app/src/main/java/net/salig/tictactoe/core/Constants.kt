@@ -6,4 +6,6 @@ object Constants {
 
     const val SERVICE_TYPE = "_tictactoe._tcp."
     //const val SERVICE_TYPE = "_services._dns-sd._udp"
+
+    const val MAX_TEXT_FIELD_CHARACTERS = 10
 }

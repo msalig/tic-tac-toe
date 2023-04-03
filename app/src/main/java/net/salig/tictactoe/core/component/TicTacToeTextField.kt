@@ -22,18 +22,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import net.salig.tictactoe.R
+import net.salig.tictactoe.core.Constants
+import net.salig.tictactoe.data.model.TextFieldError
 
 class TicTacToeTextField {
 
     fun validate(text: String): TextFieldError =
         when {
-            (text.length > 15) -> TextFieldError(R.string.error_message_length, true)
+            (text.length > Constants.MAX_TEXT_FIELD_CHARACTERS) -> TextFieldError(R.string.error_message_length,
+                true)
 
             !text.matches(Regex("^[a-zA-Z0-9. ]*\$")) -> TextFieldError(R.string.error_message_symbols,
                 true)
 
             else -> TextFieldError(R.string.nothing,
-                !(text.matches(Regex("^[a-zA-Z0-9. ]*\$")) && text.length < 15))
+                !(text.matches(Regex("^[a-zA-Z0-9. ]*\$")) && text.length <= Constants.MAX_TEXT_FIELD_CHARACTERS))
         }
 
     lateinit var label: String

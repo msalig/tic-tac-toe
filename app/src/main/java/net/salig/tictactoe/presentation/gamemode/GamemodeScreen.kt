@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.salig.tictactoe.R
-import net.salig.tictactoe.core.component.TextFieldError
 import net.salig.tictactoe.core.component.TicTacToeTextField
+import net.salig.tictactoe.data.model.TextFieldError
 import net.salig.tictactoe.presentation.game.GameScreenViewModel
 
 @Composable
@@ -63,25 +63,29 @@ fun GamemodeScreen(
                             viewModel.state = viewModel.state.copy(selfPlayerName = it)
                         })
 
-                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                        if (!viewModel.isHost) {
-                            viewModel.hostGame(context)
-                        } else {
-                            viewModel.stopHosting()
-                            viewModel.isConnected = false
-                        }
-                    }, enabled = !viewModel.isJoin && viewModel.state.selfPlayerName.isNotEmpty()) {
+                    Button(modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            if (!viewModel.isHost) {
+                                viewModel.hostGame(context)
+                            } else {
+                                viewModel.stopHosting()
+                                viewModel.isConnected = false
+                            }
+                        },
+                        enabled = !viewModel.isJoin && viewModel.state.selfPlayerName.isNotEmpty() && !error.isError) {
                         Text(text = stringResource(id = if (!viewModel.isHost) R.string.host else R.string.hosting))
                     }
 
-                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                        if (!viewModel.isJoin) {
-                            viewModel.joinGame(context)
-                        } else {
-                            viewModel.stopJoining()
-                            viewModel.isConnected = false
-                        }
-                    }, enabled = !viewModel.isHost && viewModel.state.selfPlayerName.isNotEmpty()) {
+                    Button(modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            if (!viewModel.isJoin) {
+                                viewModel.joinGame(context)
+                            } else {
+                                viewModel.stopJoining()
+                                viewModel.isConnected = false
+                            }
+                        },
+                        enabled = !viewModel.isHost && viewModel.state.selfPlayerName.isNotEmpty() && !error.isError) {
                         Text(text = stringResource(id = if (!viewModel.isJoin) R.string.join else R.string.joining))
                     }
 

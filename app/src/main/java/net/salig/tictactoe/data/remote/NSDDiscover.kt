@@ -5,6 +5,7 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
 import android.widget.Toast
+import net.salig.tictactoe.R
 import net.salig.tictactoe.core.Constants
 
 class NSDDiscover(
@@ -20,7 +21,7 @@ class NSDDiscover(
 
     fun discoverServices() {
         if (currentDiscoveryStatus == DISCOVERY_STATUS.ON) return
-        Toast.makeText(context, "Discover services!", Toast.LENGTH_LONG).show()
+        //Toast.makeText(context, "Discover services!", Toast.LENGTH_LONG).show()
         currentDiscoveryStatus = DISCOVERY_STATUS.ON
         nsdManager.discoverServices(Constants.SERVICE_TYPE,
             NsdManager.PROTOCOL_DNS_SD,
@@ -35,7 +36,8 @@ class NSDDiscover(
         override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
             Log.e(TAG, "Resolve Succeeded. $serviceInfo")
 
-            Toast.makeText(context, "Found a connection!", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.found_connection), Toast.LENGTH_LONG)
+                .show()
             currentDiscoveryStatus = DISCOVERY_STATUS.OFF
             nsdManager.stopServiceDiscovery(discoveryListener)
             setHostAndPortValues(serviceInfo)

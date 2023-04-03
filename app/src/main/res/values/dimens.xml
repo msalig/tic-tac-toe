@@ -7,7 +7,7 @@
     <dimen name="border_size">3.dp</dimen>
     <dimen name="elevation_default">3.dp</dimen>
 
-    <dimen name="player_card_height">150.dp</dimen>
+    <dimen name="player_card_height">170.dp</dimen>
     <dimen name="player_card_width">120.dp</dimen>
     <dimen name="highscore_card_height">50.dp</dimen>
     <dimen name="rounded_corners">16.dp</dimen>

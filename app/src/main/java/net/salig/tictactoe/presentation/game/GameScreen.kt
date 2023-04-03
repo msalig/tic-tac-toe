@@ -1,6 +1,6 @@
 package net.salig.tictactoe.presentation.game
 
-import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,14 +78,14 @@ fun GameScreen(
                 })
 
             //Start the Delay and set the variable to show the dialog afterwards on true
-            StartDialogDelay(isShowDialog = viewModel.showRematchDialog,
-                setShowDialogAfterDelay = { viewModel.showRematchDialogAfterDelay = it })
+            StartDialogDelay(isShowDialog = viewModel.startRematchDialogDelay,
+                setShowDialogAfterDelay = { viewModel.showRematchDialog = it })
 
             //Show the RematchDialog if showDialogAfterDelay is true
-            if (viewModel.showRematchDialogAfterDelay) {
+            if (viewModel.showRematchDialog) {
                 RematchDialog(viewModel.state, hideDialog = {
+                    viewModel.startRematchDialogDelay = false
                     viewModel.showRematchDialog = false
-                    viewModel.showRematchDialogAfterDelay = false
                 }, navigateBack = {
                     viewModel.shutdown()
                     onNavigateToMenu()
@@ -95,17 +96,22 @@ fun GameScreen(
             //Showing an Dialog when the connection to the other player is lost
             if (!viewModel.isConnected && viewModel.isLocalNetworkMultiplayer) {
                 ConnectionLostDialog {
+                    viewModel.startRematchDialogDelay = false
                     viewModel.showRematchDialog = false
-                    viewModel.showRematchDialogAfterDelay = false
                     viewModel.shutdown()
                     onNavigateToMenu()
                 }
             }
 
             //Adding a Return-to-Menu-Button if the software buttons on the phone aren't activated by default
-            if (Build.VERSION.SDK_INT >= 31) {
-                TicTacToeButton(stringResource(id = R.string.back)) { onNavigateToMenu() }
-            } else Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_default)))
+            if (Settings.Secure.getInt(LocalContext.current.contentResolver,
+                    "navigation_mode",
+                    0) == 2
+            ) {
+                TicTacToeButton(text = stringResource(id = R.string.back)) { onNavigateToMenu() }
+            } else {
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_default)))
+            }
         }
 
         BackHandler {

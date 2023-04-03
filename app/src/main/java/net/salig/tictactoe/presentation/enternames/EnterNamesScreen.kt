@@ -12,9 +12,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.salig.tictactoe.R
 import net.salig.tictactoe.core.component.MediumHeading
-import net.salig.tictactoe.core.component.TextFieldError
 import net.salig.tictactoe.core.component.TicTacToeButton
 import net.salig.tictactoe.core.component.TicTacToeTextField
+import net.salig.tictactoe.data.model.TextFieldError
 import net.salig.tictactoe.presentation.game.GameScreenViewModel
 
 @Composable

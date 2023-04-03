@@ -16,7 +16,7 @@ fun ConnectionLostDialog(
         // button. If you want to disable that functionality, simply use an empty
         // onCloseRequest.
     }, title = {
-        Text(text = stringResource(id = R.string.error))
+        Text(text = stringResource(id = R.string.return_to_menu))
     }, text = {
         Text(text = stringResource(id = R.string.error_connection_lost))
     }, confirmButton = {

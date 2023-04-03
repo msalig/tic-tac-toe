@@ -26,9 +26,8 @@ class SocketClient(
                 Log.d(TAG, "Connecting to server...")
                 socket = Socket()
                 socket?.keepAlive = true
-                //socket?.soTimeout = 2 * 3 * 60 * 1000
                 //socket?.tcpNoDelay = true
-                socket!!.connect(InetSocketAddress(host, port), 30000)
+                socket!!.connect(InetSocketAddress(host, port), CONNECTION_TIMEOUT)
 
                 if (socket!!.isConnected) {
                     Log.d(TAG, "Connected")
@@ -60,6 +59,7 @@ class SocketClient(
     }
 
     companion object {
+        private const val CONNECTION_TIMEOUT = 30000
         private val TAG = SocketClient::class.java.simpleName
     }
 }
