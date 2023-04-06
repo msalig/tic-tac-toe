@@ -14,6 +14,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.salig.tictactoe.R
+import net.salig.tictactoe.core.Constants.GESTURE_NAVIGATION
 import net.salig.tictactoe.core.Constants.InitialGridSize
 import net.salig.tictactoe.core.component.LoadingIndicator
 import net.salig.tictactoe.core.component.TicTacToeButton
@@ -26,14 +27,14 @@ fun GameScreen(
     viewModel: GameScreenViewModel = viewModel(),
 ) {
 
-    if (viewModel.isLocalNetworkMultiplayer && (viewModel.state.otherPlayerName.isEmpty() || viewModel.isWaitingForRematchResponse)) {
+    if (viewModel.isLocalNetworkMultiplayer && (viewModel.gameState.otherPlayerName.isEmpty() || viewModel.isWaitingForRematchResponse)) {
         LoadingIndicator()
 
         //TODO: BackHandler in LoadingIndicator
-        BackHandler() {
-            onNavigateToMenu()
-            viewModel.shutdown()
-        }
+        //BackHandler() {
+        //    onNavigateToMenu()
+        //    viewModel.shutdown()
+        //}
     }
 
     // A surface container using the 'background' color from the theme
@@ -43,48 +44,44 @@ fun GameScreen(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             if (viewModel.isHost) {
-                HighscoreCard(highScorePlayerOne = viewModel.state.selfPlayerHighscore,
-                    highScorePlayerTwo = viewModel.state.otherPlayerHighscore)
+                HighscoreCard(highScorePlayerOne = viewModel.gameState.selfPlayerHighscore,
+                    highScorePlayerTwo = viewModel.gameState.otherPlayerHighscore)
             } else {
-                HighscoreCard(highScorePlayerOne = viewModel.state.otherPlayerHighscore,
-                    highScorePlayerTwo = viewModel.state.selfPlayerHighscore)
+                HighscoreCard(highScorePlayerOne = viewModel.gameState.otherPlayerHighscore,
+                    highScorePlayerTwo = viewModel.gameState.selfPlayerHighscore)
             }
 
             //Adding PlayerProfileCards showing whose turn it is and the Players Icon
             Row(horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()) {
-                PlayerProfileCard(Player.ONE,
-                    if (viewModel.isHost) {
-                        viewModel.state.selfPlayerName
-                    } else {
-                        viewModel.state.otherPlayerName
-                    }, getTurn = { viewModel.state.playerAtTurn })
+                PlayerProfileCard(Player.ONE, if (viewModel.isHost) {
+                    viewModel.gameState.selfPlayerName
+                } else {
+                    viewModel.gameState.otherPlayerName
+                }, getTurn = { viewModel.gameState.playerAtTurn })
 
-                PlayerProfileCard(Player.TWO,
-                    if (viewModel.isHost) {
-                        viewModel.state.otherPlayerName
-                    } else {
-                        viewModel.state.selfPlayerName
-                    }, getTurn = { viewModel.state.playerAtTurn })
+                PlayerProfileCard(Player.TWO, if (viewModel.isHost) {
+                    viewModel.gameState.otherPlayerName
+                } else {
+                    viewModel.gameState.selfPlayerName
+                }, getTurn = { viewModel.gameState.playerAtTurn })
             }
 
             //Adding the GameBoard
-            GameBoard(state = viewModel.state,
+            GameBoard(state = viewModel.gameState,
                 screenWidth = LocalConfiguration.current.screenWidthDp,
                 isLocalNetworkMultiplayer = viewModel.isLocalNetworkMultiplayer,
                 gridSize = InitialGridSize,
-                onTapInField = { index ->
-                    viewModel.finishTurn(index)
-                })
+                onTapInField = viewModel::finishTurn)
 
             //Start the Delay and set the variable to show the dialog afterwards on true
-            StartDialogDelay(isShowDialog = viewModel.startRematchDialogDelay,
+            StartDialogDelay(isShowDialog = viewModel.startRematchDialogWithDelay,
                 setShowDialogAfterDelay = { viewModel.showRematchDialog = it })
 
             //Show the RematchDialog if showDialogAfterDelay is true
             if (viewModel.showRematchDialog) {
-                RematchDialog(viewModel.state, hideDialog = {
-                    viewModel.startRematchDialogDelay = false
+                RematchDialog(viewModel.gameState, hideDialog = {
+                    viewModel.startRematchDialogWithDelay = false
                     viewModel.showRematchDialog = false
                 }, navigateBack = {
                     viewModel.shutdown()
@@ -96,17 +93,17 @@ fun GameScreen(
             //Showing an Dialog when the connection to the other player is lost
             if (!viewModel.isConnected && viewModel.isLocalNetworkMultiplayer) {
                 ConnectionLostDialog {
-                    viewModel.startRematchDialogDelay = false
+                    viewModel.startRematchDialogWithDelay = false
                     viewModel.showRematchDialog = false
                     viewModel.shutdown()
                     onNavigateToMenu()
                 }
             }
 
-            //Adding a Return-to-Menu-Button if the software buttons on the phone aren't activated by default
+            //Adding a Return-to-Menu-Button if the software buttons on the phone aren't activated
             if (Settings.Secure.getInt(LocalContext.current.contentResolver,
                     "navigation_mode",
-                    0) == 2
+                    0) == GESTURE_NAVIGATION
             ) {
                 TicTacToeButton(text = stringResource(id = R.string.back)) { onNavigateToMenu() }
             } else {

@@ -34,6 +34,10 @@ fun GameBoard(
     val buttonSize =
         (screenWidth - 2 * dimensionResource(id = R.dimen.padding_default).value.toInt()) / gridSize
 
+    fun isOnClickEnabled(buttonUIState: GameBoardButtonUIStates) =
+        buttonUIState == GameBoardButtonUIStates.NOTHING &&
+                (!isLocalNetworkMultiplayer || state.playerAtTurn == state.selfPlayerName)
+
     Card(
         Modifier
             .size(screenWidth.dp)
@@ -57,7 +61,7 @@ fun GameBoard(
 
                     IconButton(
                         interactionSource = MutableInteractionSource(), onClick = {
-                            if (buttonState == GameBoardButtonUIStates.NOTHING && (!isLocalNetworkMultiplayer || state.playerAtTurn == state.selfPlayerName)) {
+                            if (isOnClickEnabled(buttonState)) {
                                 onTapInField(Coordinates(itemIndex, rowIndex))
                             }
                         }, modifier = Modifier

@@ -27,23 +27,23 @@ class SocketClient(
                 socket = Socket()
                 socket?.keepAlive = true
                 //socket?.tcpNoDelay = true
-                socket!!.connect(InetSocketAddress(host, port), CONNECTION_TIMEOUT)
+                socket?.connect(InetSocketAddress(host, port), CONNECTION_TIMEOUT)
 
-                if (socket!!.isConnected) {
+                if (socket?.isConnected == true) {
                     Log.d(TAG, "Connected")
                     setConnected(true)
 
                     dataInputStream = DataInputStream(socket?.getInputStream())
                     dataOutputStream = DataOutputStream(socket?.getOutputStream())
 
-                    messageHandler.init(socket)
+                    messageHandler.init(socket!!)
 
                     executor.execute {
                         messageHandler.receiveData()
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, e.message.toString())
             }
         }.start()
     }
@@ -53,7 +53,7 @@ class SocketClient(
             try {
                 socket?.close()
             } catch (e: IOException) {
-                e.printStackTrace()
+                Log.e(TAG, e.message.toString())
             }
         }
     }

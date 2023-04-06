@@ -15,18 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.salig.tictactoe.R
 import net.salig.tictactoe.core.component.TicTacToeTextField
-import net.salig.tictactoe.data.model.TextFieldError
 import net.salig.tictactoe.presentation.game.GameScreenViewModel
 
 @Composable
-fun GamemodeScreen(
+fun GameModeScreen(
     onNavigateToEnterNamesScreen: () -> Unit,
     onNavigateToGameScreen: () -> Unit,
     viewModel: GameScreenViewModel = viewModel(),
 ) {
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
 
-    var error by remember { mutableStateOf(TextFieldError()) }
+    var isError by remember { mutableStateOf(false) }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
         Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,15 +51,14 @@ fun GamemodeScreen(
                     verticalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier.fillMaxWidth()) {
 
-                    TicTacToeTextField().TextField(modifier = Modifier.fillMaxWidth(),
+                    TicTacToeTextField(modifier = Modifier.fillMaxWidth(),
                         label = stringResource(id = R.string.player_name_placeholder),
-                        playerName = viewModel.state.selfPlayerName,
-                        isError = error.isError,
+                        playerName = viewModel.gameState.selfPlayerName,
+                        isError = isError,
                         enabled = !viewModel.isHost && !viewModel.isJoin,
-                        errorMessage = error.errorMessage,
-                        updateError = { error = it },
+                        updateError = { isError = it },
                         updatePlayerName = {
-                            viewModel.state = viewModel.state.copy(selfPlayerName = it)
+                            viewModel.gameState = viewModel.gameState.copy(selfPlayerName = it)
                         })
 
                     Button(modifier = Modifier.fillMaxWidth(),
@@ -72,7 +70,7 @@ fun GamemodeScreen(
                                 viewModel.isConnected = false
                             }
                         },
-                        enabled = !viewModel.isJoin && viewModel.state.selfPlayerName.isNotEmpty() && !error.isError) {
+                        enabled = !viewModel.isJoin && viewModel.gameState.selfPlayerName.isNotEmpty() && !isError) {
                         Text(text = stringResource(id = if (!viewModel.isHost) R.string.host else R.string.hosting))
                     }
 
@@ -85,12 +83,12 @@ fun GamemodeScreen(
                                 viewModel.isConnected = false
                             }
                         },
-                        enabled = !viewModel.isHost && viewModel.state.selfPlayerName.isNotEmpty() && !error.isError) {
+                        enabled = !viewModel.isHost && viewModel.gameState.selfPlayerName.isNotEmpty() && !isError) {
                         Text(text = stringResource(id = if (!viewModel.isJoin) R.string.join else R.string.joining))
                     }
 
                     Button(modifier = Modifier.fillMaxWidth(),
-                        enabled = viewModel.isConnected && viewModel.state.selfPlayerName.isNotEmpty() && !error.isError,
+                        enabled = viewModel.isConnected && viewModel.gameState.selfPlayerName.isNotEmpty() && !isError,
                         onClick = {
                             viewModel.exchangeUsernames()
 

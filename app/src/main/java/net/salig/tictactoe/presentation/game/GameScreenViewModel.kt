@@ -30,14 +30,14 @@ class GameScreenViewModel : ViewModel() {
     private var receivedRematchResponse by mutableStateOf(false)
 
     private var buttonsAlreadyClicked = 0
-    var startRematchDialogDelay by mutableStateOf(false)
+    var startRematchDialogWithDelay by mutableStateOf(false)
     var showRematchDialog by mutableStateOf(false)
-    var state by mutableStateOf(GameState())
+    var gameState by mutableStateOf(GameState())
 
     fun finishTurn(coordinates: Coordinates) {
-        val newField = state.field.copyOf()
+        val newField = gameState.field.copyOf()
         newField[coordinates.y][coordinates.x] =
-            if ((isLocalNetworkMultiplayer && isHost) || (!isLocalNetworkMultiplayer && state.playerAtTurn == state.selfPlayerName)) 'X' else 'O'
+            if ((isLocalNetworkMultiplayer && isHost) || (!isLocalNetworkMultiplayer && gameState.playerAtTurn == gameState.selfPlayerName)) 'X' else 'O'
 
         if (isLocalNetworkMultiplayer) {
             messageHandler.sendData(Json.encodeToString(coordinates))
@@ -45,31 +45,35 @@ class GameScreenViewModel : ViewModel() {
             receivedRematchResponse = false
         }
 
-        updateState(coordinates, newField)
+        updateGameState(newField)
+
+        checkForWinner(coordinates)
     }
 
+    private fun updateGameState(field: Array<Array<Char?>>) {
+        gameState =
+            gameState.copy(playerAtTurn = if (gameState.playerAtTurn == gameState.selfPlayerName) {
+                gameState.otherPlayerName
+            } else {
+                gameState.selfPlayerName
+            }, field = field)
+    }
 
-    private fun updateState(coordinates: Coordinates, field: Array<Array<Char?>>) {
-        state = state.copy(playerAtTurn = if (state.playerAtTurn == state.selfPlayerName) {
-            state.otherPlayerName
-        } else {
-            state.selfPlayerName
-        }, field = field)
-
+    private fun checkForWinner(coordinates: Coordinates) {
         if (buttonsAlreadyClicked >= 4) {
-            checkIfSomeoneWon(state.field, coordinates, setWon = {
-                startRematchDialogDelay = true
-                state = when (it) {
+            checkIfSomeoneWon(gameState.field, coordinates, setWon = { won ->
+                startRematchDialogWithDelay = true
+                gameState = when (won) {
                     true -> {
-                        if (state.playerAtTurn != state.selfPlayerName) {
-                            state.copy(winningPlayer = state.selfPlayerName,
-                                selfPlayerHighscore = state.selfPlayerHighscore + 1)
+                        if (gameState.playerAtTurn != gameState.selfPlayerName) {
+                            gameState.copy(winningPlayer = gameState.selfPlayerName,
+                                selfPlayerHighscore = gameState.selfPlayerHighscore + 1)
                         } else {
-                            state.copy(winningPlayer = state.otherPlayerName,
-                                otherPlayerHighscore = state.otherPlayerHighscore + 1)
+                            gameState.copy(winningPlayer = gameState.otherPlayerName,
+                                otherPlayerHighscore = gameState.otherPlayerHighscore + 1)
                         }
                     }
-                    false -> state.copy(isBoardFull = true)
+                    false -> gameState.copy(isBoardFull = true)
                 }
             })
         } else {
@@ -78,13 +82,14 @@ class GameScreenViewModel : ViewModel() {
     }
 
     fun rematch() {
-        state =
-            state.copy(field = GameState.emptyField(), winningPlayer = null, isBoardFull = false)
+        gameState = gameState.copy(field = GameState.emptyField(),
+            winningPlayer = null,
+            isBoardFull = false)
 
         buttonsAlreadyClicked = 0
 
         if (isLocalNetworkMultiplayer) {
-            messageHandler.sendData(Json.encodeToString(Username(state.selfPlayerName)))
+            messageHandler.sendData(Json.encodeToString(Username(gameState.selfPlayerName)))
             if (!receivedRematchResponse) {
                 isWaitingForRematchResponse = true
             }
@@ -94,51 +99,50 @@ class GameScreenViewModel : ViewModel() {
     fun hostGame(context: Context) {
         isHost = true
         var port = -1
-        socketServer = SocketServer(messageHandler,
+        socketServer = SocketServer(messageHandler = messageHandler,
             setSelectedPort = { port = it },
             setConnected = { isConnected = it })
 
-        nsdAdvertise = NSDAdvertise(context, socketServer!!)
-        nsdAdvertise?.registerDevice(port)
+        nsdAdvertise = NSDAdvertise(context, socketServer!!, port)
     }
 
     fun joinGame(context: Context) {
         isJoin = true
 
         socketClient = SocketClient(messageHandler, setConnected = { isConnected = it })
-
         nsdDiscover = NSDDiscover(context, socketClient!!)
-        nsdDiscover?.discoverServices()
     }
 
     fun exchangeUsernames() {
-        messageHandler.sendData(Json.encodeToString(Username(state.selfPlayerName)))
+        messageHandler.sendData(Json.encodeToString(Username(gameState.selfPlayerName)))
     }
 
     private fun decodeReceivedData(receivedData: String) {
         try {
             val element = Json.decodeFromString(JsonSerializer(), receivedData)
             if (element is Username) {
-                if (element.name == state.selfPlayerName && isHost) {
-                    state = state.copy(selfPlayerName = state.selfPlayerName.plus(" Host"))
+                if (element.name == gameState.selfPlayerName && isHost) {
+                    gameState =
+                        gameState.copy(selfPlayerName = gameState.selfPlayerName.plus(" Host"))
                     exchangeUsernames()
                 }
 
-                state = state.copy(otherPlayerName = element.name)
+                gameState = gameState.copy(otherPlayerName = element.name)
 
-                if (state.otherPlayerHighscore == 0 && state.selfPlayerHighscore == 0) {
-                    state =
-                        state.copy(playerAtTurn = if (isHost) state.selfPlayerName else state.otherPlayerName)
+                if (gameState.otherPlayerHighscore == 0 && gameState.selfPlayerHighscore == 0) {
+                    gameState =
+                        gameState.copy(playerAtTurn = if (isHost) gameState.selfPlayerName else gameState.otherPlayerName)
                 } else {
                     isWaitingForRematchResponse = false
                     receivedRematchResponse = true
                 }
             } else {
                 val coordinates = element as Coordinates
-                val newField = state.field.copyOf()
+                val newField = gameState.field.copyOf()
                 newField[coordinates.y][coordinates.x] = if (!isHost) 'X' else 'O'
 
-                updateState(coordinates, newField)
+                updateGameState(newField)
+                checkForWinner(coordinates)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -153,7 +157,7 @@ class GameScreenViewModel : ViewModel() {
         isWaitingForRematchResponse = false
         receivedRematchResponse = false
 
-        state = GameState()
+        gameState = GameState()
     }
 
     fun stopHosting() {

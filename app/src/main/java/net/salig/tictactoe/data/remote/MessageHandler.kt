@@ -16,13 +16,13 @@ class MessageHandler(
     private var dataInputStream: DataInputStream? = null
     private var dataOutputStream: DataOutputStream? = null
 
-    fun init(socket: Socket?) {
+    fun init(socket: Socket) {
         this.socket = socket
         try {
-            dataInputStream = DataInputStream(socket?.getInputStream())
-            dataOutputStream = DataOutputStream(socket?.getOutputStream())
+            dataInputStream = DataInputStream(socket.getInputStream())
+            dataOutputStream = DataOutputStream(socket.getOutputStream())
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e(TAG, e.message.toString())
         }
     }
 
@@ -34,7 +34,7 @@ class MessageHandler(
                     dataOutputStream?.flush()
                     Log.d(TAG, "sent: \"$input\"")
                 } catch (e: IOException) {
-                    e.printStackTrace()
+                    Log.e(TAG, e.message.toString())
                 }
             }
         }.start()
@@ -51,10 +51,10 @@ class MessageHandler(
 
                 Log.d(TAG, "received: \"$input\"")
             } catch (e: SocketTimeoutException) {
-                e.printStackTrace()
+                Log.e(TAG, e.message.toString())
                 break
             } catch (e: IOException) {
-                e.printStackTrace()
+                Log.e(TAG, e.message.toString())
                 break
             }
         }

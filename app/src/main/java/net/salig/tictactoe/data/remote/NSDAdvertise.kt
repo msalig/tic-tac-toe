@@ -7,27 +7,45 @@ import android.net.nsd.NsdServiceInfo
 import android.util.Log
 import net.salig.tictactoe.core.Constants
 
-class NSDAdvertise(context: Context, private val socketServer: SocketServer) {
+class NSDAdvertise(
+    context: Context,
+    private val socketServer: SocketServer,
+    private val selectedPort: Int = -1,
+) {
     private val nsdManager: NsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
     var discoveryServiceName = "TicTacToeService"
-    private var selectedPort = -1
     private var currentRegistrationStatus = REGISTRATION_STATUS.NON_REGISTERED
 
     private enum class REGISTRATION_STATUS {
         REGISTERED, NON_REGISTERED
     }
 
+    /**
+     * Registration Listener for our NDS Listen logic
+     */
+    private val registrationListener: RegistrationListener = object : RegistrationListener {
+        override fun onServiceRegistered(NsdServiceInfo: NsdServiceInfo) {
+            discoveryServiceName = NsdServiceInfo.serviceName
+            Log.e(TAG,
+                "This device has been registered to be discovered through NSD...:$discoveryServiceName")
+        }
+
+        override fun onRegistrationFailed(arg0: NsdServiceInfo, arg1: Int) {}
+        override fun onServiceUnregistered(arg0: NsdServiceInfo) {}
+        override fun onUnregistrationFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {}
+    }
+
     init {
         //Start a thread with the server socket ready to receive connections...
         socketServer.startServer()
+
+        registerDevice()
     }
 
     /**
      * This method should be triggered after createServerThread has been executed...
      */
-    fun registerDevice(port: Int) {
-        selectedPort = port
-
+    private fun registerDevice() {
         if (currentRegistrationStatus == REGISTRATION_STATUS.REGISTERED) return
         if (selectedPort > -1) {
             registerService()
@@ -42,24 +60,9 @@ class NSDAdvertise(context: Context, private val socketServer: SocketServer) {
         serviceInfo.port = selectedPort
         serviceInfo.serviceName = discoveryServiceName
         serviceInfo.serviceType = Constants.SERVICE_TYPE
+        serviceInfo.setAttribute("test", "hey")
         currentRegistrationStatus = REGISTRATION_STATUS.REGISTERED
         nsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, registrationListener)
-    }
-
-    /**
-     * Registration Listener for our NDS Listen logic
-     */
-    private val registrationListener: RegistrationListener = object : RegistrationListener {
-        override fun onServiceRegistered(NsdServiceInfo: NsdServiceInfo) {
-            discoveryServiceName = NsdServiceInfo.serviceName
-            //Toast.makeText(context, "Registered device!", Toast.LENGTH_LONG).show()
-            Log.e(TAG,
-                "This device has been registered to be discovered through NSD...:$discoveryServiceName")
-        }
-
-        override fun onRegistrationFailed(arg0: NsdServiceInfo, arg1: Int) {}
-        override fun onServiceUnregistered(arg0: NsdServiceInfo) {}
-        override fun onUnregistrationFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {}
     }
 
     fun shutdown() {
@@ -69,7 +72,7 @@ class NSDAdvertise(context: Context, private val socketServer: SocketServer) {
                 nsdManager.unregisterService(registrationListener)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, e.message.toString())
         }
     }
 

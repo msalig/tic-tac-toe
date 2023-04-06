@@ -1,8 +1,6 @@
 package net.salig.tictactoe.data.remote
 
 import android.util.Log
-import java.io.DataInputStream
-import java.io.DataOutputStream
 import java.io.IOException
 import java.net.ServerSocket
 import java.net.Socket
@@ -15,19 +13,17 @@ class SocketServer(
     private val setConnected: (Boolean) -> Unit,
 ) {
     private var socket: Socket? = null
-    private var dataInputStream: DataInputStream? = null
-    private var dataOutputStream: DataOutputStream? = null
 
     private lateinit var serverSocket: ServerSocket
 
-    private var executor: Executor = Executors.newFixedThreadPool(2)
+    private val executor: Executor = Executors.newFixedThreadPool(2)
 
     init {
         try {
             serverSocket = ServerSocket(0)
             setSelectedPort(serverSocket.localPort)
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e(TAG, e.message.toString())
         }
     }
 
@@ -37,21 +33,18 @@ class SocketServer(
                 Log.d(TAG, "ServerSocket waiting for connection to accept ...")
                 socket = serverSocket.accept()
 
-                if (socket!!.isConnected) {
+                if (socket?.isConnected == true) {
                     Log.d(TAG, "Connected")
                     setConnected(true)
 
-                    dataInputStream = DataInputStream(socket?.getInputStream())
-                    dataOutputStream = DataOutputStream(socket?.getOutputStream())
-
-                    messageHandler.init(socket)
+                    messageHandler.init(socket!!)
 
                     executor.execute {
                         messageHandler.receiveData()
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, e.message.toString())
             }
         }.start()
     }
@@ -61,7 +54,7 @@ class SocketServer(
             try {
                 socket?.close()
             } catch (e: IOException) {
-                e.printStackTrace()
+                Log.e(TAG, e.message.toString())
             }
         }
     }

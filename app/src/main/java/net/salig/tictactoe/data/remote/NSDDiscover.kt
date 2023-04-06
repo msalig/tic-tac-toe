@@ -4,12 +4,10 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
-import android.widget.Toast
-import net.salig.tictactoe.R
 import net.salig.tictactoe.core.Constants
 
 class NSDDiscover(
-    private val context: Context,
+    context: Context,
     private val client: SocketClient,
 ) {
     private val nsdManager: NsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
@@ -18,38 +16,6 @@ class NSDDiscover(
     private var currentDiscoveryStatus = DISCOVERY_STATUS.OFF
 
     private enum class DISCOVERY_STATUS { ON, OFF }
-
-    fun discoverServices() {
-        if (currentDiscoveryStatus == DISCOVERY_STATUS.ON) return
-        //Toast.makeText(context, "Discover services!", Toast.LENGTH_LONG).show()
-        currentDiscoveryStatus = DISCOVERY_STATUS.ON
-        nsdManager.discoverServices(Constants.SERVICE_TYPE,
-            NsdManager.PROTOCOL_DNS_SD,
-            discoveryListener)
-    }
-
-    private var resolveListener: NsdManager.ResolveListener = object : NsdManager.ResolveListener {
-        override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
-            Log.e(TAG, "Resolve failed$errorCode")
-        }
-
-        override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
-            Log.e(TAG, "Resolve Succeeded. $serviceInfo")
-
-            Toast.makeText(context, context.getString(R.string.found_connection), Toast.LENGTH_LONG)
-                .show()
-            currentDiscoveryStatus = DISCOVERY_STATUS.OFF
-            nsdManager.stopServiceDiscovery(discoveryListener)
-            setHostAndPortValues(serviceInfo)
-
-            client.connectToServer(host!!, port)
-        }
-    }
-
-    private fun setHostAndPortValues(serviceInfo: NsdServiceInfo) {
-        host = serviceInfo.host.hostAddress
-        port = serviceInfo.port
-    }
 
     private val discoveryListener: NsdManager.DiscoveryListener =
         object : NsdManager.DiscoveryListener {
@@ -87,6 +53,40 @@ class NSDDiscover(
             }
         }
 
+    init {
+        discoverServices()
+    }
+
+    private fun discoverServices() {
+        if (currentDiscoveryStatus == DISCOVERY_STATUS.ON) return
+        currentDiscoveryStatus = DISCOVERY_STATUS.ON
+
+        nsdManager.discoverServices(Constants.SERVICE_TYPE,
+            NsdManager.PROTOCOL_DNS_SD,
+            discoveryListener)
+    }
+
+    private var resolveListener: NsdManager.ResolveListener = object : NsdManager.ResolveListener {
+        override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
+            Log.e(TAG, "Resolve failed$errorCode")
+        }
+
+        override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
+            Log.e(TAG, "Resolve Succeeded. $serviceInfo")
+
+            currentDiscoveryStatus = DISCOVERY_STATUS.OFF
+            nsdManager.stopServiceDiscovery(discoveryListener)
+            setHostAndPortValues(serviceInfo)
+
+            client.connectToServer(host!!, port)
+        }
+    }
+
+    private fun setHostAndPortValues(serviceInfo: NsdServiceInfo) {
+        host = serviceInfo.host.hostAddress
+        port = serviceInfo.port
+    }
+
     fun shutdown() {
         try {
             client.close()
@@ -94,7 +94,7 @@ class NSDDiscover(
                 nsdManager.stopServiceDiscovery(discoveryListener)
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, e.message.toString())
         }
     }
 
